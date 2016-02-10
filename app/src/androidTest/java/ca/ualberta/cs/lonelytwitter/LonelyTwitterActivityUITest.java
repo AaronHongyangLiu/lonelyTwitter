@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 /**
  * Created by sajediba on 2/8/16.
  */
@@ -29,6 +31,7 @@ public class LonelyTwitterActivityUITest extends ActivityInstrumentationTestCase
     }
 
     //makeTweet(text) fills in the input text field and clicks the 'save' button for the activity under test:
+
     private void makeTweet(String text) {
         assertNotNull(activity.findViewById(ca.ualberta.cs.lonelytwitter.R.id.save));
         textInput.setText(text);
@@ -36,8 +39,20 @@ public class LonelyTwitterActivityUITest extends ActivityInstrumentationTestCase
     }
 
     //
-    //
+    @UiThreadTest // get exception if not have this line
+    public void testMakeTweet(){
+        LonelyTwitterActivity lta = (LonelyTwitterActivity) getActivity();
+        int oldLength = lta.getAdapter().getCount();
+        makeTweet("Testing");
+        ArrayAdapter<Tweet> arrayAdapter = lta.getAdapter();
 
+        assertEquals(oldLength+1, arrayAdapter.getCount());
+
+        assertTrue("Did you add a Tweet object?",arrayAdapter.getItem(arrayAdapter.getCount()-1) instanceof Tweet);
+
+        Tweet t = arrayAdapter.getItem(arrayAdapter.getCount()-1);
+        assertEquals("Error Message: this is not the text we excepted",t.getMessage(),"Testing");
+    }
     //
     //
 }
